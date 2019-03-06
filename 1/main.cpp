@@ -9,7 +9,6 @@
 
 struct Node {
     Node() : Next(nullptr) {};
-
     ~Node() {};
     int index;
     Node *Next;
@@ -73,6 +72,6 @@ int main() {
             Lap = 0;
         }
     }
-    std::cout << "Оставшийся элемент: " <<elem->index;
+    std::cout << elem->index;
     return 0;
 }
