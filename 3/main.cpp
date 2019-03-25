@@ -1,4 +1,5 @@
 /*
+*
 *Реализовать очередь с помощью двух стеков. Использовать стек, реализованный с помощью динамического буфера.
 *Обрабатывать команды push back и pop front.
 *Формат ввода
@@ -16,37 +17,38 @@ class Stack {
 public:
     Stack() : size(0), buffer(nullptr), flag(true), stack(nullptr) {};
 
-    ~Stack() {
-    };
+    ~Stack() = default;
 
+    int *Resize() {
+        if (flag) {
+            stack = new int[current];
+            if (buffer != nullptr) {
+                for (int i = 0; i < size; i++)
+                    stack[i] = buffer[i];
+
+            }
+            delete[](buffer);
+            flag = false;
+            return stack;
+        } else if (!flag) {
+            buffer = new int[current];
+            if (stack != nullptr) {
+                for (int i = 0; i < size; i++)
+                    buffer[i] = stack[i];
+
+            }
+            delete[](stack);
+            flag = true;
+            return buffer;
+        }
+    }
 
     void Push(int Item) {
         if (size >= (current - 1)) {
             current *= 2;
-            if (flag) {
-                stack = new int[current];
-                if (buffer != nullptr) {
-                    for (int i = 0; i < size; i++)
-                        stack[i] = buffer[i];
-
-                }delete[](buffer);
-                flag = false;
-            }
-            if (!flag) {
-                buffer = new int[current];
-                if (stack != nullptr) {
-                    for (int i = 0; i < size; i++)
-                        buffer[i] = stack[i];
-
-                }delete[](stack);
-                flag = true;
-
-            }
+            stack = Resize();
         }
-        if (!flag)
-            stack[size] = Item;
-        if (flag)
-            buffer[size] = Item;
+        stack[size] = Item;
         size++;
     }
 
@@ -63,11 +65,7 @@ public:
             return -1;
         else
             size--;
-        if (!flag)
-            return stack[size];
-        if (flag)
-            return buffer[size];
-        return 0;
+        return stack[size];
     }
 
 
@@ -83,7 +81,7 @@ class Queue {
 public:
     Queue() : sizeQ(0) {};
 
-    ~Queue() = default;;
+    ~Queue() = default;
 
     void PushBack(int Item) {
         Input.Push(Item);
