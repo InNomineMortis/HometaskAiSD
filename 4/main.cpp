@@ -9,59 +9,116 @@
  * Фрукт массы 1гр он съедает полностью.
  */
 #include <iostream>
-#include <list>
+#include <vector>
+#include <cassert>
 
-using namespace std;
 
-struct MyList {
-    MyList() : next(nullptr), value(-1) {};
+struct MyStruct {
+    MyStruct() : next(nullptr), value(-1) {};
 
-    ~MyList() {};
+    ~MyStruct() {};
     int value;
-    MyList *next;
+    MyStruct *next;
 };
 
 class Heap {
-    Heap() : parent(nullptr), heapSize(0) {};
+public:
+    Heap() : size(0), current(1) {};
 
     ~Heap() = default;
 
-public:
-    void add(int value) {
-        List.push_back(value);
-        int i = heapSize - 1;
-        int root = (i - 1) / 2;
-        while (i > 0 && getItem(root) < List[i]) {
-            int temp = List[i];
-            List[i] = List[root];
-            List[root] = temp;
+    /* void Add(int elem) {
+         if (IsEmpty()) {
+             current *= 2;
+             arr = new int[current];
+             arr[0] = elem;
+         } else {
+             if (size >= current) {
+                 int *tmp = new int[size];
+                 for (int i = 0; i < size; i++)
+                     tmp[i] = arr[i];
+                 delete[] arr;
+                 int *arr = new int[current];
+                 for (int i = 0; i < size; i++)
+                     arr[i] = tmp[i];
+                 delete[](tmp);
+             }
+             arr[size] = elem;
+             size++;
+         }
 
-            i = root;
-            root = (i - 1) / 2;
+     }
+ */
+    void Insert(int elem) {
+        arr.push_back(elem);
+        siftUp(arr.size() - 1);
+    };
+
+    int ExtractMax() {
+        assert(IsEmpty());
+        int result = arr[0];
+        arr[0] = arr[arr.size()];
+        arr.pop_back();
+        if (!IsEmpty()) {
+            siftDown(0);
         }
+        return result;
     }
 
-    int getItem(MyList *pointer) {
-        MyList *tmp;
-        tmp->next = root;
-        for (tmp; tmp != pointer; tmp = tmp->next);
-        return tmp->value;
+    bool IsEmpty() {
+        return size == 0;
     }
 
 private:
-    MyList *root;
-    int heapSize;
+    std::vector<int> arr;
+    int current = 1;
+    int size;
+
+    void buildHeap() {
+        for (int i = arr.size() / 2 - 1; i >= 0; --i) {
+            siftDown(i);
+        }
+    };
+
+    void siftDown(int i) {
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+        int largest = i;
+        if (left < arr.size() && arr[left] > arr[i])
+            largest = left;
+        if (right < arr.size() && arr[right] > arr[largest])
+            largest = right;
+        if (largest != i) {
+            std::swap(arr[i], arr[largest]);
+            siftDown(largest);
+        }
+    }
+
+    void siftUp(int index) {
+        while (index > 0) {
+            int parent = (index - 1) / 2;
+            if (arr[index] <= arr[parent])
+                return;
+            std::swap(arr[index], arr[parent]);
+            index = parent;
+        }
+    };
+
+
 };
 
 int main() {
     int n = 0; //Количество фрутков
     std::cin >> n;
-    int *fruit = new int[n]; //Масса каждого фрукта
-    for (int i = 0; i < n; i++)
-        std::cin >> fruit[i];
+    Heap fruit;    //Масса каждого фрукта
+    int elem = 0;
+    for (int i = 0; i < n; i++) {
+        std::cin >> elem;
+        fruit.Insert(elem);
+    }
     int k = 0; //Грухоподъемность
     std::cin >> k;
-
-    std::cout << "Hello, World!" << std::endl;
+    for (int i = 0; i < n; i++)
+        std::cout << fruit.ExtractMax() << std::endl;
     return 0;
 }
