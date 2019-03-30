@@ -10,7 +10,6 @@
      * Функцию Partition реализуйте методом прохода двумя итераторами от конца массива к началу.
      */
     #include <iostream>
-    #include <vector>
 
     using namespace std;
 
